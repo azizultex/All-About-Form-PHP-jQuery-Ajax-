@@ -9,6 +9,7 @@
     </head>
     <body>
 	<?php
+	/*
 		// Object oriented type db connection 
 
 		// useful variables 
@@ -17,7 +18,7 @@
 		$dbname = "phpform";
 		$tbname = "my_table";
 
-		$message = '';
+		$message = $error = '' ;
 		
 		// connection 
 		$conn = new mysqli( $servername, $username);
@@ -64,7 +65,13 @@
 		$user_name = $user_email = $user_password = $user_bio = $user_job = "";
 
 		if($_SERVER["REQUEST_METHOD"] == "POST") {
-			$user_name = filter($_POST['user_name']);
+			$user_name = $_POST['user_name'];
+			if($user_name) {
+				$user_name = filter($user_name);
+			} else {
+				$error = 'User name is required!';
+			}
+			
 			$user_email = filter($_POST['user_email']);
 			$user_password = filter($_POST['user_password']);
 			$user_bio = filter($_POST['user_bio']);
@@ -73,17 +80,23 @@
 
 		$insert_data = "INSERT INTO $tbname (UserName, UserPass, UserEmail, UserBio, UserJob)
 		VALUES ('$user_name', '$user_email', '$user_password', '$user_bio', '$user_job')";
-
-		if ($conn->query($insert_data)=== TRUE ) {
-			$message = "You have successfully registered!";
+		
+		if( $error != '') {
+			$message = $error;
 		} else {
-			$message = "Sorry! Error in registration : " . $conn->error;
+			if ($conn->query($insert_data)=== TRUE ) {
+				$message = "You have successfully registered!";
+			} else {
+				$message = "Sorry! Error in registration : " . $conn->error;
+			}
 		}
 
 		$conn->close();
+		
+		*/
 	?>
 
-      <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
+      <form action="" method="post" id="registration-form">
         <h1>Sign Up</h1>
         <fieldset>
           <legend><span class="number">1</span>Your basic info</legend>
@@ -138,9 +151,11 @@
           <input type="checkbox" id="business" value="interest_business" name="user_interest"><label class="light" for="business">Business</label>
         
         </fieldset>
-        <button type="submit">Sign Up</button>
-		<p><?php echo $message; ?></p>
+        <input id="submit" type="submit" value="Sign Up">
+		<p class="message"></p>
       </form>
-
+	  
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="js/script.js"></script>
     </body>
 </html>
